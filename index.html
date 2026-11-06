@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Incident Review</title>
+  <meta name="description" content="Turn an incident timeline into response metrics, a phase chart, and a blameless postmortem draft.">
+  <link rel="stylesheet" href="src/styles.css">
+</head>
+<body>
+  <header class="top">
+    <div>
+      <h1>Incident Review</h1>
+      <p class="sub">Paste the timeline from the incident channel. Get response metrics, a phase chart, and a postmortem draft.</p>
+    </div>
+    <div class="actions">
+      <button type="button" id="copy">Copy postmortem</button>
+      <button type="button" id="download" class="ghost">Download .md</button>
+      <button type="button" id="share" class="ghost">Copy share link</button>
+      <button type="button" id="reset" class="ghost">Load sample</button>
+    </div>
+  </header>
+
+  <main class="layout">
+    <form id="form" class="panel" autocomplete="off">
+      <label>Incident title<input name="title"></label>
+      <div class="grid2">
+        <label>Service<input name="service"></label>
+        <label>SLO (%)<input name="slo" type="number" min="90" max="99.999" step="0.01"></label>
+      </div>
+      <label>Share of users affected (%)<input name="usersAffected" type="number" min="0" max="100" step="1" data-pct></label>
+      <label>Timeline
+        <textarea name="timeline" rows="13" spellcheck="false"></textarea>
+        <span class="field-hint">One event per line: <code>2026-10-14 09:02 [start] text</code>. Later lines can skip the date. Tags: <code>[start]</code> <code>[detect]</code> <code>[ack]</code> <code>[mitigate]</code> <code>[resolve]</code>. Untagged lines are notes. Times are UTC.</span>
+      </label>
+      <label>Action items
+        <textarea name="actions" rows="4" spellcheck="false"></textarea>
+        <span class="field-hint">One per line: <code>action | owner | priority</code></span>
+      </label>
+    </form>
+
+    <section class="results">
+      <ul id="warnings" class="warnings" aria-live="polite"></ul>
+      <div id="cards" class="cards"></div>
+
+      <div class="panel">
+        <div class="chart-head">
+          <h2>Where the time went</h2>
+          <ul class="legend" id="legend"></ul>
+        </div>
+        <div class="chart-wrap">
+          <svg id="chart" role="img" aria-label="Incident phases on a timeline"></svg>
+          <div id="tooltip" class="tooltip" hidden></div>
+        </div>
+        <p class="hint" id="chart-note"></p>
+      </div>
+
+      <div class="panel">
+        <div class="chart-head"><h2>Postmortem draft</h2></div>
+        <pre id="markdown" class="md"></pre>
+      </div>
+    </section>
+  </main>
+
+  <footer class="foot">Runs entirely in your browser. Your draft is kept in the page URL and in this browser, and nothing is uploaded.</footer>
+  <script type="module" src="src/app.js"></script>
+</body>
+</html>
